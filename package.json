@@ -1,0 +1,15 @@
+{
+  "name": "mymonitor",
+  "version": "1.0.0",
+  "description": "A console program to monitor performance and availability of websites",
+  "main": "main.js",
+  "scripts": {
+    "start" : "node main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Antoine Paris",
+  "license": "ISC",
+  "dependencies": {
+    "request": "^2.88.0"
+  }
+}
