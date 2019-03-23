@@ -1,7 +1,7 @@
 var promisify = require("util").promisify
 var request = require("request")
 
-export function createInterval(websiteDic, website_key){
+module.exports.createInterval = function(websiteDic, website_key){
 
     websiteParams = websiteDic[website_key]
     
