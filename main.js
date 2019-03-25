@@ -1,6 +1,7 @@
 const readline = require('readline');
+const {displayStats} = require('./displayStats')
 
- var {addWebsite, getWebsiteDic} = require("./handleWebsiteList");
+ var {addWebsite, getWebsitesDic} = require("./handleWebsiteList");
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -8,14 +9,14 @@ const rl = readline.createInterface({
 });
 
 rl.prompt()
-
+var i = setInterval(()=> {displayStats(getWebsitesDic());rl.prompt(true)},10000)
 rl.on('line', (answer) => {
-    if (answer == "exit") {rl.close() }
+    if (answer == "exit") {rl.close(); clearInterval(i) }
 
     else {
        var listCmd = answer.split(" ");
         addWebsite(...listCmd)
     }
-    setInterval(()=> console.log(getWebsiteDic()["google"].measures),10000)
+
 });
 

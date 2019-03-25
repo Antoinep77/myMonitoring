@@ -4,12 +4,15 @@
   "description": "A console program to monitor performance and availability of websites",
   "main": "main.js",
   "scripts": {
-    "start" : "node main.js",
+    "start": "node main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Antoine Paris",
   "license": "ISC",
   "dependencies": {
-    "request": "^2.88.0"
+    "cli-table": "^0.3.1",
+    "console.table": "^0.10.0",
+    "request": "^2.88.0",
+    "table": "^5.2.3"
   }
 }

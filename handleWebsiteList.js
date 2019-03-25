@@ -1,7 +1,8 @@
-var {createInterval} = require("./metrics")
+var promisify = require("util").promisify
+var request = require("request")
 
-/* Exemple of website_dic
-website_dic = {site1:{
+/* Exemple of websitesDic
+websitesDic = {site1:{
     url : "www.google.com",
     interval: undefined,
     intervalDuration : 20,
@@ -16,28 +17,52 @@ website_dic = {site1:{
     }
 }*/
 
-var websiteDic = {}
+var websitesDic = {}
 
-module.exports.addWebsite = function(key,url,intervalDuration, force = false){
-    if (!force && key in websiteDic){
+var computeMeasure = (websiteParams) =>{
+    var date = new Date();
+    promisify(request.get)({ url: websiteParams.url, time: true })
+        .then( response => {
+            var newMeasure = {
+                date, // date at request start
+                responseTime : response.elapsedTime,
+                responseCode: response.statusCode,
+                noResponse : false
+            };
+            websiteParams.measures.push(newMeasure)
+        }).catch( err =>{
+            var newMeasure = {
+                date,
+                noResponse : true
+            };
+            websiteParams.measures.push(newMeasure)
+        })
+}
+
+module.exports.addWebsite = (key,url,intervalDuration, force = false) => {
+    if (!force && key in websitesDic){
         throw new Error("This key is not available")
     }
-    websiteDic[key] = {
+    websitesDic[key] = {
         url,
         intervalDuration,
-        measures : []
+        measures : [],
+        interval : setInterval(()=>computeMeasure(websitesDic[key]),intervalDuration)
     }
-    createInterval(websiteDic,key)
 }
 
-module.exports.deleteWebsite = function(key){
-    if (! key in websiteDic){
+module.exports.deleteWebsite = (key) => {
+    if (! key in websitesDic){
         throw new Error("No website with this key")
     }
-    clearInterval(websiteDic[key].interval)
-    delete websiteDic[key]
+    clearInterval(websitesDic[key].interval)
+    delete websitesDic[key]
 }
 
-module.exports.getWebsiteDic = function(){
-    return websiteDic
+module.exports.getWebsitesDic = ()=> {
+    return websitesDic
 }
+
+    
+
+    
