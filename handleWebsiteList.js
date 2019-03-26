@@ -14,12 +14,18 @@ websitesDic = {site1:{
             noResponse : false
         }
     ]
+    alerts : [
+        {
+            startingDate: new Date(),     //if alerts.length > 0 or alerts[alerts.length-1].endingDate == null
+            endingDate: null              // then the website is on alert
+        }
+        ]
     }
 }*/
 
 var websitesDic = {}
 
-var computeMeasure = (websiteParams) =>{
+var sendRequests = (websiteParams) =>{
     var date = new Date();
     promisify(request.get)({ url: websiteParams.url, time: true })
         .then( response => {
@@ -39,21 +45,22 @@ var computeMeasure = (websiteParams) =>{
         })
 }
 
-module.exports.addWebsite = (key,url,intervalDuration, force = false) => {
-    if (!force && key in websitesDic){
-        throw new Error("This key is not available")
+module.exports.addWebsite = (key,url,intervalDuration) => {
+    if (key in websitesDic){
+        throw new Error("This website's name is already given. Please delete first the website or pick an other name.")
     }
     websitesDic[key] = {
         url,
         intervalDuration,
         measures : [],
-        interval : setInterval(()=>computeMeasure(websitesDic[key]),intervalDuration)
+        interval : setInterval(()=>sendRequests(websitesDic[key]),intervalDuration),
+        alerts:[]
     }
 }
 
 module.exports.deleteWebsite = (key) => {
-    if (! key in websitesDic){
-        throw new Error("No website with this key")
+    if (! (key in websitesDic)){
+        throw new Error("No website with this name")
     }
     clearInterval(websitesDic[key].interval)
     delete websitesDic[key]
