@@ -16,8 +16,24 @@ var closeApp = () =>{
     }
 }
 
+var stopDisplaying = ()=>{
+    clearInterval(displayInterval);
+    displayInterval = null;
+}
+
+var resumeDisplaying = ()=>{
+    if (!displayInterval){
+        displayInterval = setInterval(()=> {displayStats(getWebsitesDic());rl.prompt(true)},10000)
+    }
+}
+
+var mainFunctions = {closeApp,stopDisplaying,resumeDisplaying};
+
 rl.prompt()
-rl.on('line', executeCommand.bind(undefined,closeApp));
+rl.on('line', commandLine => {
+    executeCommand(mainFunctions,commandLine);
+    rl.prompt()
+});
 
 var displayInterval = setInterval(()=> {displayStats(getWebsitesDic());rl.prompt(true)},10000)
 

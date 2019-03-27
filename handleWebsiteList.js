@@ -1,25 +1,21 @@
 var promisify = require("util").promisify
 var request = require("request")
 
-/* Exemple of websitesDic
+/* Model of websitesDic
 websitesDic = {site1:{
     url : "www.google.com",
     interval: undefined,
     intervalDuration : 20,
-    measures: [
-        {   
-            date:new Date(),
+    measures: [{   
+            date:new Date(),    // date at the start of the request
             responseTime :523,
             responseCode : 200,
             noResponse : false
-        }
-    ]
-    alerts : [
-        {
-            startingDate: new Date(),     //if alerts.length > 0 or alerts[alerts.length-1].endingDate == null
+        }]
+    alerts : [{
+            startingDate: new Date(),     //if alerts.length > 0 and alerts[alerts.length-1].endingDate == null
             endingDate: null              // then the website is on alert
-        }
-        ]
+        }]
     }
 }*/
 
@@ -60,7 +56,7 @@ module.exports.addWebsite = (key,url,intervalDuration) => {
 
 module.exports.deleteWebsite = (key) => {
     if (! (key in websitesDic)){
-        throw new Error("No website with this name")
+        throw new Error("No website with this name.")
     }
     clearInterval(websitesDic[key].interval)
     delete websitesDic[key]

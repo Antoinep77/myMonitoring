@@ -1,9 +1,9 @@
 
 module.exports.computeMetricsByTimeframes = (measures,timeframesDuration,framesNb) => {
     
+    //group measure in timeframes
     currentDate = new Date()
     var measuresGroupByTimeframes = new Array(framesNb).fill(null).map(()=>[]);
-    
     for (var measure of measures){
         // find the right timeframe in which the measure should be added 
         var frameIndex = Math.floor((currentDate - measure.date)/timeframesDuration);
@@ -17,6 +17,9 @@ module.exports.computeMetricsByTimeframes = (measures,timeframesDuration,framesN
     // format to display the table with the package cli-table (see displayStats.js)
     var metricsTable = [[],["request counts"],["max response time (ms)"],["avg response time (ms)"],["availability"]]
 
+    //counts of the response codes over all timeframes
+    var responseCodes= {};
+
     for (var indexFrame in measuresGroupByTimeframes){
         indexFrame = parseInt(indexFrame)
         var timeframe = measuresGroupByTimeframes[indexFrame];
@@ -26,21 +29,21 @@ module.exports.computeMetricsByTimeframes = (measures,timeframesDuration,framesN
         var timeframeIntervalInMin = [Math.floor(timeframesDuration/60000)*indexFrame, Math.floor(timeframesDuration/60000)*(1+indexFrame)]   
         // frame name to be displayed
         metricsTable[0].push(timeframeIntervalInMin[0]+"m-"+timeframeIntervalInMin[1]+"m ago")
-
         //compute request counts
         metricsTable[1].push(timeframe.length)
-
         //compute max response time
-        metricsTable[2].push(timeResponses.length >0 ?Math.max(...timeResponses):NaN)
-
+        metricsTable[2].push(timeResponses.length >0 ? Math.max(...timeResponses):NaN)
         //compute avg response time
         metricsTable[3].push(timeResponses.length >0 ? Math.round(timeResponses.reduce((a,b)=>a+b)/timeResponses.length):NaN)
-
         //compute avaibality
         var nbResponse = timeframe.filter(measure => !measure.noResponse).length
         metricsTable[4].push(+(nbResponse/timeframe.length).toFixed(4))
+        //compute response codes counts
+        for (var code of timeframe.map(m => m.responseCode).filter(code=>code)) {
+            responseCodes[code] = responseCodes[code] ? responseCodes[code] + 1 : 1;
+        }   
     }
-    return metricsTable;
+    return [metricsTable,responseCodes];
 }
 
 module.exports.computeCurrentAvailability = (measures) => {
