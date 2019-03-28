@@ -46,7 +46,7 @@ var sendRequest = (websiteParams,maxAwaitTime = 10000) =>{
 
 module.exports.addWebsite = (key,url,intervalDuration=100) => {
     if (key in websitesDic){
-        throw new Error("This website's name is already given. Please delete first the website or pick an other name.")
+        throw new Error("This website name is already given. Please delete first the website or pick an other name.")
     }
     websitesDic[key] = {
         url,
