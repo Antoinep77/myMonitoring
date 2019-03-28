@@ -111,14 +111,14 @@ module.exports.displayAlertLogs = (websitesDic,website = null) =>{
         var alertList =  websitesDic[website].alerts
     }
     //sort by date
-    alertList.sort((a,b) => a.startingDate < b.startingDate)
+    alertList.sort((a,b) => a.startingDate - b.startingDate)
 
     //display alerts
-    process.stdout.write("\n")
-    for(var alert of alertList){
+    process.stdout.write("\nList of alerts :\n")
+    for(var alert of alertList){ 
         var timeAsString = (alert.startingDate.getHours() < 10 ? '0' : '') + alert.startingDate.getHours()+":"+(alert.startingDate.getMinutes() < 10 ? '0' : '') + alert.startingDate.getMinutes();
-        var duration = Math.round((alert.endingDate - alert.startingDate)/1000)
-        process.stdout.write("Alert occurerd at "+timeAsString+" for "+duration+"s.")
-
+        var endingDate = alert.endingDate? alert.endingDate : new Date();
+        var duration = Math.round((endingDate - alert.startingDate)/1000)
+        process.stdout.write("Alert occurred at "+timeAsString+" for "+duration+"s.\n")
     }
 }

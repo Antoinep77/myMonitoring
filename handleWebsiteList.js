@@ -21,9 +21,12 @@ websitesDic = {site1:{
 
 var websitesDic = {}
 
-var sendRequests = (websiteParams) =>{
+var sendRequests = (websiteParams,maxAwaitTime = 5000) =>{
     var date = new Date();
-    promisify(request.get)({ url: websiteParams.url, time: true })
+    var requestPromise = promisify(request.get)({ url: websiteParams.url, time: true });
+    var timeoutPromise = new Promise((resolve,reject) => setTimeout(()=>reject("Response took too long"),maxAwaitTime))
+    
+    Promise.race([requestPromise,timeoutPromise])
         .then( response => {
             var newMeasure = {
                 date, // date at request start
