@@ -1,6 +1,6 @@
 var  {addWebsite, deleteWebsite, getWebsitesDic} = require("./handleWebsiteList");
 var {displayAlertLogs} = require('./displayStats')
-var {startTestServer,setResponseRate,stopTestServer} = require('./testServer')
+var {startTestServer,stopTestServer} = require('./testServer')
 
 module.exports.executeCommand = (mainFunctions,commandLine) => {
     var commands = commandLine.toLowerCase().split(" ")
@@ -47,6 +47,18 @@ module.exports.executeCommand = (mainFunctions,commandLine) => {
         //command "stoptest" to stop the server 
         else if(commands[0] == "stoptest"){
             stopTestServer()
+        }
+
+        //show the list of the monitored websites
+        else if(commands[0] == "websites"){
+            var websiteDic = getWebsitesDic();
+            for(var website in websiteDic){
+                process.stdout.write("\n"+website+" : "+websiteDic[website].url +" checked every "+ websiteDic[website].intervalDuration+"ms")
+            }
+        }
+        else{
+            process.stdout.write("\n Command not found. The list of commands is : \n"+
+            "- add\n- alerts\n- delete\n- display\n- exit\n- nodisplay\n- stoptest\n- test\n- websites\n")
         }
 
 

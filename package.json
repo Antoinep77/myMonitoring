@@ -1,5 +1,5 @@
 {
-  "name": "mymonitor",
+  "name": "mymonitoring",
   "version": "1.0.0",
   "description": "A console program to monitor performance and availability of websites",
   "main": "main.js",
@@ -12,9 +12,7 @@
   "dependencies": {
     "chalk": "^2.4.2",
     "cli-table": "^0.3.1",
-    "console.table": "^0.10.0",
     "express": "^4.16.4",
-    "request": "^2.88.0",
-    "table": "^5.2.3"
+    "request": "^2.88.0"
   }
 }

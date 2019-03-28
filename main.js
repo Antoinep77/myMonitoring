@@ -1,7 +1,8 @@
 const readline = require('readline');
 const {displayStats} = require('./displayStats')
 const {executeCommand} = require('./clui')
-const {getWebsitesDic,deleteWebsite} = require("./handleWebsiteList");
+const {getWebsitesDic,clearAllInterval} = require("./handleWebsiteList");
+const {stopTestServer} = require('./testServer')
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -11,9 +12,9 @@ const rl = readline.createInterface({
 var closeApp = () =>{
     rl.close(); 
     clearInterval(displayInterval);
-    for(var website in getWebsitesDic()){
-        deleteWebsite(website);
-    }
+    stopTestServer()
+    clearAllInterval()
+    process.stdout.write("App is closing\n")
 }
 
 var stopDisplaying = ()=>{
@@ -32,7 +33,10 @@ var mainFunctions = {closeApp,stopDisplaying,resumeDisplaying};
 rl.prompt()
 rl.on('line', commandLine => {
     executeCommand(mainFunctions,commandLine);
-    rl.prompt()
+    if (!rl.closed){
+        process.stdout.write("\n")
+        rl.prompt()
+    }
 });
 
 var displayInterval = setInterval(()=> {displayStats(getWebsitesDic());rl.prompt(true)},10000)

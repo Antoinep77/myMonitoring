@@ -21,7 +21,7 @@ websitesDic = {site1:{
 
 var websitesDic = {}
 
-var sendRequests = (websiteParams,maxAwaitTime = 5000) =>{
+var sendRequest = (websiteParams,maxAwaitTime = 10000) =>{
     var date = new Date();
     var requestPromise = promisify(request.get)({ url: websiteParams.url, time: true });
     var timeoutPromise = new Promise((resolve,reject) => setTimeout(()=>reject("Response took too long"),maxAwaitTime))
@@ -44,7 +44,7 @@ var sendRequests = (websiteParams,maxAwaitTime = 5000) =>{
         })
 }
 
-module.exports.addWebsite = (key,url,intervalDuration) => {
+module.exports.addWebsite = (key,url,intervalDuration=100) => {
     if (key in websitesDic){
         throw new Error("This website's name is already given. Please delete first the website or pick an other name.")
     }
@@ -52,7 +52,7 @@ module.exports.addWebsite = (key,url,intervalDuration) => {
         url,
         intervalDuration,
         measures : [],
-        interval : setInterval(()=>sendRequests(websitesDic[key]),intervalDuration),
+        interval : setInterval(()=>sendRequest(websitesDic[key]),intervalDuration),
         alerts:[]
     }
 }
@@ -63,6 +63,12 @@ module.exports.deleteWebsite = (key) => {
     }
     clearInterval(websitesDic[key].interval)
     delete websitesDic[key]
+}
+
+module.exports.clearAllInterval = () => {
+    for(var website in websitesDic){
+        clearInterval(websitesDic[website].interval)
+    }
 }
 
 module.exports.getWebsitesDic = ()=> {
